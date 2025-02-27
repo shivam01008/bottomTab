@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = 'https://astroadmin.cloudpub.in/api/';
+const BASE_URL = 'http://15.206.16.230:8084/api/v1/landlord';
 
 export const Endpoint = axios.create({
   baseURL: BASE_URL,
@@ -10,7 +10,6 @@ export const Endpoint = axios.create({
 export const upload = axios.create({
   baseURL: BASE_URL,
   timeout: 5000,
-  headers: { "Content-Type": "multipart/form-data" }, // Enable file uploads
 });
 
 // Request Interceptor (No Store, Assuming Token is Passed Dynamically)

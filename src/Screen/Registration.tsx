@@ -8,6 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Auth } from '../Service/Auth'; // Import the Auth function
 
 const Registration = () => {
   const navigation = useNavigation();
@@ -17,9 +18,8 @@ const Registration = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  
 
   const validateInputs = () => {
     let isValid = true;
@@ -58,13 +58,38 @@ const Registration = () => {
     return isValid;
   };
 
-  const handleRegister = () => {
-    if (validateInputs()) {
-      Alert.alert('Success', 'Registration Successful!', [
-        { text: 'OK', onPress: () => navigation.replace('HomeTabs') },
-      ]);
+  const handleRegister = async () => {
+    if (!validateInputs()) return;
+  
+    setLoading(true); // Show loading while API call is happening
+  
+    try {
+      const requestBody = {
+        phone,  // Send only the phone as per AuthRequest interface
+      };
+  
+      console.log("Sending API request with body:", requestBody);
+  
+      const response = await Auth(requestBody);
+  
+      console.log("API Response:", response);
+  
+      setLoading(false); // Hide loading after API response
+  
+      if (response.status) {
+        Alert.alert("Success", response.message, [
+          { text: "OK", onPress: () => navigation.replace("HomeTabs") },
+        ]);
+      } else {
+        Alert.alert("Error", response.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("API Call Error:", error);
+      Alert.alert("Error", "Something went wrong. Please try again.");
     }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -114,8 +139,10 @@ const Registration = () => {
         <Text style={styles.error}>{errors.confirmPassword}</Text>
       )}
 
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register & Go to Home</Text>
+      <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={loading}>
+        <Text style={styles.buttonText}>
+          {loading ? 'Registering...' : 'Register & Go to Home'}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -128,8 +155,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
-
-
   },
   title: {
     fontSize: 24,
