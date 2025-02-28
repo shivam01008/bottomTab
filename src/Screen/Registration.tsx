@@ -78,7 +78,7 @@ const Registration = () => {
   
       if (response.status) {
         Alert.alert("Success", response.message, [
-          { text: "OK", onPress: () => navigation.replace("HomeTabs") },
+          { text: "OK", onPress: () => navigation.reset({index:0,routes:[{name:"DRAWER"}]})},
         ]);
       } else {
         Alert.alert("Error", response.message);
@@ -108,6 +108,7 @@ const Registration = () => {
         placeholder="Phone Number"
         keyboardType="numeric"
         value={phone}
+        maxLength={10}
         onChangeText={setPhone}
       />
       {errors.phone && <Text style={styles.error}>{errors.phone}</Text>}
